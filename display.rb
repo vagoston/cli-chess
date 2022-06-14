@@ -9,21 +9,37 @@ PAWN = ["\u2659", "\u265F"]
 NONE = [" ", " "]
 
     def Display.draw(board)
+        puts add_frame(add_fields(board)).join("\n")
+    end
+
+    def Display.add_fields(board)
+        fields = []
         for r in 0..7 do
             row = []
             for c in 0..7 do
                 row << background(r^c, board[r][c])
             end
-            row <<  background(1, [" ", " "])
-            puts row.join(" ")
+            fields << (row.join(" ") << " ")
         end
+        fields
+    end
+
+    def Display.add_frame(rows)
+        full_board = []
+        edge_color = "\e[100m\e[97m"
+        letters = edge_color + ("A".."H").to_a.join(" ") + " "
+        [letters,* rows, letters].reverse.each_with_index do | row, index|
+            edge = edge_color + " " + (index.between?(1,8) ? index.to_s : " ") + " "
+            full_board << " " + edge + row + edge + "\e[0m "
+        end
+        full_board
     end
 
     def Display.background(position, piece)
         if (position & 1 == 0)
-            return "\e[47m\e[30m" + piece[0] 
+            return "\e[107m\e[30m" + piece[0]
         else 
-            return"\e[40m\e[37m" + piece[1]
+            return"\e[40m\e[97m" + piece[1]
         end
     end
 end 
